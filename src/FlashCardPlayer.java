@@ -18,6 +18,7 @@ public class FlashCardPlayer {
     private JFrame frame;
     private boolean näitaVastus;
     private JButton näitaVastustNupp;
+    private JButton käiUuestiLäbiNupp; /// karel
 
     public FlashCardPlayer(){
         frame = new JFrame("Flash Card Player");
@@ -35,10 +36,26 @@ public class FlashCardPlayer {
         qScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         näitaVastustNupp = new JButton("Näita vastust.");
+        käiUuestiLäbiNupp = new JButton("Tee uuesti."); /// karel
 
         mainPanel.add(qScroll);
         mainPanel.add(näitaVastustNupp);
         näitaVastustNupp.addActionListener(new NextCardListener());
+
+        mainPanel.add(käiUuestiLäbiNupp); /// karel
+        käiUuestiLäbiNupp.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(kaardid != null && !kaardid.isEmpty()){
+                    cardIterator = kaardid.iterator();
+                    näitaVastustNupp.setEnabled(true);
+                    showNextCard();
+                }
+            }
+        });  /// karel
+
+
+
 
         JMenuBar menüü = new JMenuBar();
         JMenu fileMenu = new JMenu("File");
