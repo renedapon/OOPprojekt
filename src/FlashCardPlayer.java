@@ -67,8 +67,6 @@ public class FlashCardPlayer {
         frame.setSize(640, 400);
         frame.setVisible(true);
 
-
-
         fileMenu.add(loadMenuItem);
         menüü.add(fileMenu);
 
@@ -99,7 +97,6 @@ public class FlashCardPlayer {
                     näitaVastustNupp.setEnabled(false);
                 }
             }
-
         }
     }
 
