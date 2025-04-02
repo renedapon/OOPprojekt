@@ -7,27 +7,29 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Collections;
+import java.util.Random;
 
 /**
  * Antud klassi abil on võimalik läbi mängida/teha oma loodud flashkaartide kogumit. Mängides on võimalik
  * näidata vastust, peale mida saab liikuda järgmise kaardi juurde. Lisaks on võimalus alustada kaartide kogumit uuesti algusest
  */
-public class FlashCardPlayer {
+public class FlashCardMängija {
     private JTextArea display;
     private ArrayList<FlashCard> kaardid;
     private Iterator<FlashCard> cardIterator;
-    private FlashCard currentCard;
+    private FlashCard hetkeKaart;
     private JFrame frame;
     private boolean näitaVastus;
     private JButton näitaVastustNupp;
     private JButton käiUuestiLäbiNupp;
 
-    public FlashCardPlayer() {
+    public FlashCardMängija() {
         try {
             UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
         } catch (Exception ignored) {}
 
-        frame = new JFrame("FlashCard Player");
+        frame = new JFrame("FlashCard Mängija");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(600, 400);
         frame.setLocationRelativeTo(null);
@@ -68,24 +70,25 @@ public class FlashCardPlayer {
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         //ActionListener, et saada aru kui nuppu on vajutatud,
-        näitaVastustNupp.addActionListener(new NextCardListener());
+        näitaVastustNupp.addActionListener(new järgmineKaart());
+
         //ActionListener, et saada aru kui uuesti läbikäimise nuppu vajutati
         // kui kaardid on olemas siis nuppu vajutades hakkavad küsimused otsast peale
         käiUuestiLäbiNupp.addActionListener(e -> {
             if (kaardid != null && !kaardid.isEmpty()) {
                 cardIterator = kaardid.iterator();
                 näitaVastustNupp.setEnabled(true);
-                showNextCard();
+                näitaJärgmineKaart();
             }
         });
 
         //nupud menüüreale
         JMenuBar menüü = new JMenuBar();
-        JMenu fileMenu = new JMenu("File");
-        JMenuItem loadMenuItem = new JMenuItem("Lae kaartide kogum");
-        loadMenuItem.addActionListener(new OpenMenuListener());
+        JMenu fileMenu = new JMenu("Fail");
+        JMenuItem laeMenüü = new JMenuItem("Lae kaartide kogum");
+        laeMenüü.addActionListener(new laeMenüüListener());
 
-        fileMenu.add(loadMenuItem);
+        fileMenu.add(laeMenüü);
         menüü.add(fileMenu);
         frame.setJMenuBar(menüü);
         frame.getContentPane().add(mainPanel);
@@ -93,7 +96,7 @@ public class FlashCardPlayer {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(FlashCardPlayer::new);
+        SwingUtilities.invokeLater(FlashCardMängija::new);
     }
 
     /**
@@ -101,17 +104,17 @@ public class FlashCardPlayer {
      * abil kuvatakse küsimuse vastus kui seda pole veel näidatud. Muul juhul kuvab järgmise kaardi.
      * Lisaks liigub ka järgmise kaarti juurde ja kui kaardid on läbi mängitud kuvab toreda teksti.
       */
-    class NextCardListener implements ActionListener{
+    class järgmineKaart implements ActionListener{
 
         @Override
         public void actionPerformed(ActionEvent e) {
             if(näitaVastus){
-                fadeInText(currentCard.getVastus());
+                tekstiEffekt(hetkeKaart.getVastus());
                 näitaVastustNupp.setText("Järgmine kaart"); //muudab nupu nimetust
                 näitaVastus = false;
             } else {
                 if (cardIterator.hasNext()){
-                    showNextCard();
+                    näitaJärgmineKaart();
                 } else { //kaardid otsas
                     display.setText("See oli viimane kaart, hea töö!");
                     näitaVastustNupp.setEnabled(false);
@@ -123,25 +126,25 @@ public class FlashCardPlayer {
     /**
      * Nii öelda "kuulaja", mis avab faili, kui oleme file exploreris valinud .txt faili ja vajutanud "Open" nuppu
      */
-    private class OpenMenuListener implements ActionListener {
+    private class laeMenüüListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            JFileChooser fileOpen = new JFileChooser(); //loob failivaliku
-            fileOpen.showOpenDialog(frame); //kuvab seda kasutajale
-            loadFile(fileOpen.getSelectedFile()); //laeb meetodi abil faili
+            JFileChooser antudFailAvamiseks = new JFileChooser(); //loob failivaliku
+            antudFailAvamiseks.showOpenDialog(frame); //kuvab seda kasutajale
+            laeFail(antudFailAvamiseks.getSelectedFile()); //laeb meetodi abil faili
         }
     }
 
     /**
      * Meetod laeb ja töötab faili läbi,ehk splitib teksti " -- " juurest,
      * kus esimene pool on küsimus ja teine pool vastus, need listakse Flaschardi objektina kaartide Listi.
-     * @param selectedFile antud fail millest hakatakse lugema teksti kaartide ArrayListi.
+     * @param antudFail antud fail millest hakatakse lugema teksti kaartide ArrayListi.
      */
-    private void loadFile(File selectedFile) {
+    private void laeFail(File antudFail) {
         kaardid = new ArrayList<FlashCard>();
 
         try{
-            BufferedReader reader = new BufferedReader(new FileReader(selectedFile));
+            BufferedReader reader = new BufferedReader(new FileReader(antudFail));
             String line = null;
             while ((line = reader.readLine()) != null){
                 String[] osad = line.split(" -- ");
@@ -156,26 +159,28 @@ public class FlashCardPlayer {
             e.printStackTrace();
         }
 
+        //segab järjekorra ära
+        Collections.shuffle(kaardid, new Random());
         cardIterator = kaardid.iterator();
-        showNextCard();
+        näitaJärgmineKaart();
     }
 
     /**
      * Meetod abil liigutakse Iteratori abil järgmise kaardi juurde ja kuvatakse küsimust
      */
-    private void showNextCard() {
-        currentCard = (FlashCard) cardIterator.next();
-        fadeInText(currentCard.getKüsimus());  //kuvab küsimuse fadeInText meetodi abil
+    private void näitaJärgmineKaart() {
+        hetkeKaart = (FlashCard) cardIterator.next();
+        tekstiEffekt(hetkeKaart.getKüsimus());  //kuvab küsimuse fadeInText meetodi abil
         näitaVastustNupp.setText("Näita vastust"); //muudab nupu nime
         näitaVastus = true;
     }
 
     /**
      * Meetod toob teksti sujuvamalt sisse, alustades läbipaistvast ja jõudes täielikult nähtavaks
-     * @param text tekst mida kuvatakse sujuva effektiga
+     * @param tekst tekst mida kuvatakse sujuva effektiga
      */
-    private void fadeInText(String text) {
-        display.setText(text);
+    private void tekstiEffekt(String tekst) {
+        display.setText(tekst);
         display.setForeground(new Color(0, 0, 0, 0)); // Alguses läbipaistev
 
         Timer fadeTimer = new Timer(50, new ActionListener() {

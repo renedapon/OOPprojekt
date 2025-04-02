@@ -13,21 +13,21 @@ import java.util.Iterator;
  * saab kirjutada küsimuse ja Vastuse aknasse vastuse, järgmise kaardi tegemise juurde saab liikuda vajutades
  * nuppu "lisa kaart".
  */
-public class FlashCardBuilder {
+public class FlashCardMoodusta {
     private JTextArea küsimus;
     private JTextArea vastus;
     private ArrayList<FlashCard> kaardid;
     private JFrame frame;
     private JButton järgmine; //muutus
 
-    public FlashCardBuilder(){
+    public FlashCardMoodusta(){
 
         try {
             UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
         } catch (Exception ignored) {}
 
         //UI
-        frame = new JFrame("FlashCards Builder");
+        frame = new JFrame("FlashCards Moodustamine");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // peamine paneel, kuhu kõik kastid ja tekst läheb
@@ -86,22 +86,22 @@ public class FlashCardBuilder {
         mainPanel.add(järgmine);
 
         //tuvastab kui vajutatakse nuppu, et liikuda järgmise kaardi juurde, ehk lisa kaart.
-        järgmine.addActionListener(new NextCardListener());
+        järgmine.addActionListener(new järgmineKaart());
 
         //Menüü nupud
         JMenuBar menüü = new JMenuBar();
-        JMenu failimenüü = new JMenu("File");
-        JMenuItem newMenuItem = new JMenuItem("New");
-        JMenuItem saveMenuItem = new JMenuItem("Save");
+        JMenu failimenüü = new JMenu("Fail");
+        JMenuItem uusMenüü = new JMenuItem("Uus");
+        JMenuItem salvestaMenüü = new JMenuItem("Salvesta");
 
-        failimenüü.add(newMenuItem);
-        failimenüü.add(saveMenuItem);
+        failimenüü.add(uusMenüü);
+        failimenüü.add(salvestaMenüü);
 
         menüü.add(failimenüü);
 
         //Eventlisteners, selleks, et tuvastada kui vajutatakse New või Save nuppu.
-        newMenuItem.addActionListener(new NewMenuItemListener());
-        saveMenuItem.addActionListener(new SaveMenuItemListener());
+        uusMenüü.addActionListener(new uusMenüüListener());
+        salvestaMenüü.addActionListener(new salvestaMenüüListener());
 
         frame.setJMenuBar(menüü);
 
@@ -115,7 +115,7 @@ public class FlashCardBuilder {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new FlashCardBuilder();
+                new FlashCardMoodusta();
             }
         });
     }
@@ -125,7 +125,7 @@ public class FlashCardBuilder {
      * saadakse mõlema JTextArea käest juhul kui küsimus ega vastus pole tühjad.
      * Kõige lõpus tehakse kaardi väljad tühjaks, et järgmisel kaardil pole juba teksti ees.
      */
-    class NextCardListener implements ActionListener{
+    class järgmineKaart implements ActionListener{
 
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -134,12 +134,12 @@ public class FlashCardBuilder {
                 FlashCard kaart = new FlashCard(küsimus.getText(), vastus.getText());
                 kaardid.add(kaart);
             }
-            clearCard();
+            puhastaKaart();
         }
 
     }
 
-    class NewMenuItemListener implements ActionListener{
+    class uusMenüüListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
             System.out.println("new");
@@ -150,7 +150,7 @@ public class FlashCardBuilder {
      * Klassi abil on võimalik salvestada antud kaartide ArrayList soovitud faili, vajutades Menüüs "save"
      * peale siis avaneb n-ö fail explorer vaade ja võimalik sealtkaudu fail salvestada kasutades saveFile meetodit.
      */
-    class SaveMenuItemListener implements ActionListener{
+    class salvestaMenüüListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
             if(!küsimus.equals("") || !vastus.equals("")){
@@ -159,19 +159,19 @@ public class FlashCardBuilder {
             }
 
             //File dialog koos file chooser-iga
-            JFileChooser fileSave = new JFileChooser();
-            fileSave.showSaveDialog(frame);
-            saveFile(fileSave.getSelectedFile());
+            JFileChooser antudFail = new JFileChooser();
+            antudFail.showSaveDialog(frame);
+            salvestaFaili(antudFail.getSelectedFile());
         }
     }
 
     /**
-     * @param selectedFile antud fail kuhu kaartide arraylistist flashcardid (küsimus ja vastus) salvestatakse.
+     * @param etteantudFail antud fail kuhu kaartide arraylistist flashcardid (küsimus ja vastus) salvestatakse.
      *kirjutab nii: küsimus -- vastus (reavahetus). lõpus sulgeb faili ja errori korral väljastab teate
      */
-    private void saveFile(File selectedFile) {
+    private void salvestaFaili(File etteantudFail) {
         try{
-            BufferedWriter writer = new BufferedWriter(new FileWriter(selectedFile));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(etteantudFail));
 
             Iterator<FlashCard> cardIterator = kaardid.iterator();
             while (cardIterator.hasNext()){
@@ -190,7 +190,7 @@ public class FlashCardBuilder {
      * Meetod tühjendab väljad, et järgmisel kaardil poleks infot ees
      * ning saaks alustada uuesti küsimuse ja vastuse kirjutamist
      */
-    private void clearCard() {
+    private void puhastaKaart() {
         küsimus.setText("");
         vastus.setText("");
         küsimus.requestFocus();
