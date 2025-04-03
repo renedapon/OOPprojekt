@@ -142,7 +142,8 @@ public class FlashCardMoodusta {
     class uusMenüüListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
-            System.out.println("new");
+            kaardid.clear();
+            puhastaKaart();
         }
     }
 
