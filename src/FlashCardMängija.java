@@ -150,6 +150,7 @@ public class FlashCardMängija {
                 String[] osad = line.split(" -- ");
                 String küsimus = osad[0];
                 String vastus = osad[1];
+                if(vastus == null) throw new ValeFailiFormaatErind("Faili formaat ei vasta nõuetele (küsimus == vastus).");
                 FlashCard kaart = new FlashCard(küsimus, vastus);
                 kaardid.add(kaart);
             }
