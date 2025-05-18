@@ -139,6 +139,9 @@ public class FlashCardMoodusta {
 
     }
 
+    /**
+     * Klassi abil on võimalik kõik eelenvalt kirjutatud väljad tühjendada ka alustada algusest FlashKaartide tegemisega
+     */
     class uusMenüüListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
