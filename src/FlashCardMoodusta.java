@@ -23,26 +23,39 @@ public class FlashCardMoodusta {
     public FlashCardMoodusta(){
 
         try {
-            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel");
         } catch (Exception ignored) {}
 
         //UI
         frame = new JFrame("FlashCards Moodustamine");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setIconImage(new ImageIcon("flash-cards.png").getImage());
+
 
         // peamine paneel, kuhu kõik kastid ja tekst läheb
         JPanel mainPanel =new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS)); //kastid tekivad uksteise alla
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20,20,20,20));//loob tuhja ala umber
 
-        Font font = new Font("Helvetica Neue", Font.BOLD, 20);
+        Font font = new Font("Roboto", Font.BOLD, 20);
+        Font fontTekst = new Font("Comic Sans MS", Font.PLAIN, 20);
+        Font fontKaks = new Font("Oswald", Font.BOLD, 10);
+
+        // Et oleks võimalik tausta pilti kuvada
+        TaustPanel küsimusePaneel = new TaustPanel("pilt.jpg");
+        TaustPanel vastusePaneel = new TaustPanel("pilt.jpg");
+
 
         //vastava kasti üleval, et teha kasutajale mõistetavaks, kuhu kirjutada antud Flashcardi küsimus
-        JLabel küsimuseLabel = new JLabel("Küsimus");
+        JLabel küsimuseLabel = new JLabel("KÜSIMUS");
+        küsimuseLabel.setForeground(Color.WHITE);
+        küsimuseLabel.setFont(fontKaks);
         küsimus = new JTextArea(4, 10);
+        küsimus.setMargin(new Insets(10,20,10,10));
+        küsimus.setForeground(Color.BLUE);
         küsimus.setLineWrap(true);
         küsimus.setWrapStyleWord(true);
-        küsimus.setFont(font);
+        küsimus.setFont(fontTekst);
 
         //JScrollPane
         JScrollPane küsimuseJScrollPane = new JScrollPane(küsimus);
@@ -51,11 +64,16 @@ public class FlashCardMoodusta {
 
 
         //antud kasti uleval, et teha kasutajale mõistetavaks, kuhu kirjutada flashcardi vastus
-        JLabel vastuseLabel = new JLabel("Vastus");
+        JLabel vastuseLabel = new JLabel("VASTUS");
+        vastuseLabel.setForeground(Color.WHITE);
+        vastuseLabel.setFont(fontKaks);
         vastus = new JTextArea(4, 10);
+        //äärised
+        vastus.setMargin(new Insets(10,20,10,10));
+        vastus.setForeground(Color.BLUE);
         vastus.setLineWrap(true);
         vastus.setWrapStyleWord(true);
-        vastus.setFont(font);
+        vastus.setFont(fontTekst);
 
         JScrollPane vastuseJScrollPane = new JScrollPane(vastus);
         vastuseJScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -64,7 +82,7 @@ public class FlashCardMoodusta {
 
         //nupp uue kaardi lisamiseks, voimalik peale selle vajutamist uut kaarti hakata taitma
         JButton järgmine = new JButton("Lisa kaart");
-        järgmine.setBackground(new Color(104, 155, 198));
+        järgmine.setBackground(Color.GRAY);
         järgmine.setForeground(Color.WHITE);
         järgmine.setFont(new Font("Arial", Font.BOLD, 14));
         järgmine.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -72,18 +90,36 @@ public class FlashCardMoodusta {
         //kaartide ArrayList kuhu lähevad küsimused koos vastustega
         kaardid = new ArrayList<FlashCard>();
 
+        // LISAD
+        küsimus.setOpaque(false); // et taust paistaks läbi
+        küsimus.setBackground(new Color(0, 0, 0, 0)); // läbipaistev
+        küsimuseJScrollPane.setOpaque(false);
+        küsimuseJScrollPane.getViewport().setOpaque(false);
+
+        // Tee sama vastuse jaoks
+        vastus.setOpaque(false);
+        vastus.setBackground(new Color(0, 0, 0, 0));
+        vastuseJScrollPane.setOpaque(false);
+        vastuseJScrollPane.getViewport().setOpaque(false);
+
+        küsimusePaneel.add(küsimuseJScrollPane);
+        vastusePaneel.add(vastuseJScrollPane);
+
 
 
         //Komponentide lisamine peapaneeli
         mainPanel.add(küsimuseLabel);
-        mainPanel.add(küsimuseJScrollPane);
+        //mainPanel.add(küsimuseJScrollPane);
+        mainPanel.add(küsimusePaneel);
         mainPanel.add(Box.createVerticalStrut(10));
 
         mainPanel.add(vastuseLabel);
-        mainPanel.add(vastuseJScrollPane);
+        //mainPanel.add(vastuseJScrollPane);
+        mainPanel.add(vastusePaneel);
         mainPanel.add(Box.createVerticalStrut(10));
 
         mainPanel.add(järgmine);
+        mainPanel.setBackground(Color.DARK_GRAY);
 
         //tuvastab kui vajutatakse nuppu, et liikuda järgmise kaardi juurde, ehk lisa kaart.
         järgmine.addActionListener(new järgmineKaart());
@@ -93,6 +129,9 @@ public class FlashCardMoodusta {
         JMenu failimenüü = new JMenu("Fail");
         JMenuItem uusMenüü = new JMenuItem("Uus");
         JMenuItem salvestaMenüü = new JMenuItem("Salvesta");
+
+        menüü.setBackground(Color.DARK_GRAY);
+        menüü.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
         failimenüü.add(uusMenüü);
         failimenüü.add(salvestaMenüü);

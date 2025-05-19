@@ -13,7 +13,8 @@ import java.util.*;
  * näidata vastust, peale mida saab liikuda järgmise kaardi juurde. Lisaks on võimalus alustada kaartide kogumit uuesti algusest
  */
 public class FlashCardMängija {
-    private JTextArea display;
+    //private JTextArea display;
+    private JLabel display;
     private ArrayList<FlashCard> kaardid;
     private Iterator<FlashCard> cardIterator;
     private FlashCard hetkeKaart;
@@ -28,24 +29,34 @@ public class FlashCardMängija {
 
     public FlashCardMängija() {
         try {
-            UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel");
         } catch (Exception ignored) {}
 
         frame = new JFrame("FlashCard Mängija");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(600, 400);
         frame.setLocationRelativeTo(null);
-        frame.setIconImage(new ImageIcon("icon.png").getImage());
+        frame.setIconImage(new ImageIcon("flash-cards.png").getImage());
 
         JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
+        JPanel keskPanel = new JPanel(new BorderLayout());
 
-        Font font = new Font("Helvetica Neue", Font.BOLD, 20);
+        Font font = new Font("Playfair Display", Font.PLAIN, 24);
+
+        display = new Taust("", "pilt.jpg");
+        display.setFont(font);
+        display.setVerticalAlignment(SwingConstants.CENTER);
+
+        keskPanel.add(display, BorderLayout.CENTER);
+        mainPanel.add(keskPanel, BorderLayout.CENTER);
+        /*
         display = new JTextArea(10, 20);
         display.setFont(font);
         display.setLineWrap(true);
         display.setWrapStyleWord(true);
         display.setEditable(false);
         display.setBackground(new Color(255, 255, 255));
+         */
 
         JScrollPane qScroll = new JScrollPane(display);
         qScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -65,9 +76,9 @@ public class FlashCardMängija {
         // MUUDATUS
         ValeNupp.setFont(buttonFont);
 
-        näitaVastustNupp.setBackground(new Color(104, 155, 198));
+        näitaVastustNupp.setBackground(Color.GRAY);
         näitaVastustNupp.setForeground(Color.WHITE);
-        käiUuestiLäbiNupp.setBackground(new Color(104, 155, 198));
+        käiUuestiLäbiNupp.setBackground(Color.GRAY);
         käiUuestiLäbiNupp.setForeground(Color.WHITE);
 
         // MUUDATUS
@@ -83,9 +94,13 @@ public class FlashCardMängija {
         ValeNupp.setVisible(false);
         käiUuestiLäbiNupp.setVisible(false);
 
+        buttonPanel.setBackground(Color.DARK_GRAY);
+
 
         mainPanel.add(qScroll, BorderLayout.CENTER);
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+
+        mainPanel.setBackground(Color.DARK_GRAY);
 
         //ActionListener, et saada aru kui nuppu on vajutatud,
         näitaVastustNupp.addActionListener(new järgmineKaart());
@@ -102,7 +117,7 @@ public class FlashCardMängija {
                 näitaVastustNupp.setVisible(true);
 
                 näitaVastustNupp.setText("Näita vastust");
-                näitaVastustNupp.setBackground(new Color(104, 155, 198));
+                näitaVastustNupp.setBackground(Color.GRAY);
                 System.out.println("Võtab valede kaartide listi");
                 Uuedkaardid = new ArrayList<>(ValestiVastatud);
 
@@ -122,7 +137,7 @@ public class FlashCardMängija {
                 käiUuestiLäbiNupp.setVisible(false);
 
                 näitaVastustNupp.setText("Näita vastust");
-                näitaVastustNupp.setBackground(new Color(104, 155, 198));
+                näitaVastustNupp.setBackground(Color.GRAY);
 
                 cardIterator = kaardid.iterator();
                 näitaVastustNupp.setEnabled(true);
@@ -172,7 +187,7 @@ public class FlashCardMängija {
             } else {
                 if (cardIterator.hasNext()){
                     näitaJärgmineKaart();
-                    näitaVastustNupp.setBackground(new Color(104, 155, 198));
+                    näitaVastustNupp.setBackground(Color.GRAY);
                 }
 
                 else { //kaardid otsas
@@ -197,7 +212,7 @@ public class FlashCardMängija {
                     näitaVastustNupp.setVisible(false);
                     ValeNupp.setVisible(false);
                     näitaVastustNupp.setText("Näita vastust");
-                    näitaVastustNupp.setBackground(new Color(104, 155, 198));
+                    näitaVastustNupp.setBackground(Color.GRAY);
                 }
             }
         }
@@ -216,7 +231,7 @@ public class FlashCardMängija {
             if(cardIterator.hasNext()){
                 näitaJärgmineKaart();
                 ValeNupp.setVisible(false);
-                näitaVastustNupp.setBackground(new Color(104, 155, 198));
+                näitaVastustNupp.setBackground(Color.GRAY);
             }
             else {
                 if(!ValestiVastatud.isEmpty()){
