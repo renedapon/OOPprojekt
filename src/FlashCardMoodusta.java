@@ -83,7 +83,7 @@ public class FlashCardMoodusta {
         //nupp uue kaardi lisamiseks, voimalik peale selle vajutamist uut kaarti hakata taitma
         JButton järgmine = new JButton("Lisa kaart");
         järgmine.setBackground(Color.GRAY);
-        järgmine.setForeground(Color.WHITE);
+        järgmine.setForeground(Color.black);
         järgmine.setFont(new Font("Arial", Font.BOLD, 14));
         järgmine.setAlignmentX(Component.CENTER_ALIGNMENT);
 
