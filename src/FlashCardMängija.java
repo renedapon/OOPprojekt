@@ -42,9 +42,10 @@ public class FlashCardMängija {
         JPanel keskPanel = new JPanel(new BorderLayout());
 
         Font font = new Font("Playfair Display", Font.PLAIN, 24);
+        Font fontTekst = new Font("Comic Sans MS", Font.PLAIN, 24);
 
         display = new Taust("", "pilt.jpg");
-        display.setFont(font);
+        display.setFont(fontTekst);
         display.setVerticalAlignment(SwingConstants.CENTER);
 
         keskPanel.add(display, BorderLayout.CENTER);
@@ -101,6 +102,7 @@ public class FlashCardMängija {
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         mainPanel.setBackground(Color.DARK_GRAY);
+
 
         //ActionListener, et saada aru kui nuppu on vajutatud,
         näitaVastustNupp.addActionListener(new järgmineKaart());
