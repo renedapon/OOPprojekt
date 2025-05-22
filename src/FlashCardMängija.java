@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -77,14 +78,14 @@ public class FlashCardMängija {
         // MUUDATUS
         ValeNupp.setFont(buttonFont);
 
-        näitaVastustNupp.setBackground(Color.gray);
-        näitaVastustNupp.setForeground(Color.black);
-        käiUuestiLäbiNupp.setBackground(Color.gray);
-        käiUuestiLäbiNupp.setForeground(Color.black);
+        näitaVastustNupp.setBackground(Color.GRAY);
+        näitaVastustNupp.setForeground(Color.WHITE);
+        käiUuestiLäbiNupp.setBackground(Color.GRAY);
+        käiUuestiLäbiNupp.setForeground(Color.WHITE);
 
         // MUUDATUS
-        ValeNupp.setBackground(Color.red);
-        ValeNupp.setForeground(Color.black);
+        ValeNupp.setBackground(Color.RED);
+        ValeNupp.setForeground(Color.WHITE);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         buttonPanel.add(näitaVastustNupp);
@@ -119,7 +120,7 @@ public class FlashCardMängija {
                 näitaVastustNupp.setVisible(true);
 
                 näitaVastustNupp.setText("Näita vastust");
-                näitaVastustNupp.setBackground(Color.gray);
+                näitaVastustNupp.setBackground(Color.GRAY);
                 System.out.println("Võtab valede kaartide listi");
                 Uuedkaardid = new ArrayList<>(ValestiVastatud);
 
@@ -139,7 +140,7 @@ public class FlashCardMängija {
                 käiUuestiLäbiNupp.setVisible(false);
 
                 näitaVastustNupp.setText("Näita vastust");
-                näitaVastustNupp.setBackground(Color.gray);
+                näitaVastustNupp.setBackground(Color.GRAY);
 
                 cardIterator = kaardid.iterator();
                 näitaVastustNupp.setEnabled(true);
@@ -184,24 +185,26 @@ public class FlashCardMängija {
                 tekstiEffekt(hetkeKaart.getVastus());
                 näitaVastustNupp.setText("Õige"); //muudab nupu nimetust
                 ValeNupp.setVisible(true);
-                näitaVastustNupp.setBackground(Color.green);
+                näitaVastustNupp.setBackground(Color.GREEN);
                 näitaVastus = false;
             } else {
                 if (cardIterator.hasNext()){
                     näitaJärgmineKaart();
-                    näitaVastustNupp.setBackground(Color.gray);
+                    näitaVastustNupp.setBackground(Color.GRAY);
                 }
 
                 else { //kaardid otsas
                     if(!ValestiVastatud.isEmpty()){
                         käiUuestiLäbiNupp.setText("Proovi veel");
                         käiUuestiLäbiNupp.setVisible(true);
+                        display.setForeground(Color.RED);
                         display.setText("Vastasid mõne küsimuse valesti, proovi veel!");
 
                     }
                     else{
                         käiUuestiLäbiNupp.setText("Tee uuesti");
                         käiUuestiLäbiNupp.setVisible(true);
+                        display.setForeground(Color.GREEN);
                         display.setText("See oli viimane kaart, hea töö!");
 
                     }
@@ -278,27 +281,40 @@ public class FlashCardMängija {
      */
     private void laeFail(File antudFail) {
         kaardid = new ArrayList<FlashCard>();
-
-        try{
+        try {
             BufferedReader reader = new BufferedReader(new FileReader(antudFail));
             String line = null;
-            while ((line = reader.readLine()) != null){
-
+            while ((line = reader.readLine()) != null) {
                 String[] osad = line.split(" -- ");
-                String küsimus = osad[0];
-                String vastus = osad[1];
-                if(osad[1] != null) {
-                    FlashCard kaart = new FlashCard(küsimus, vastus);
-                    kaardid.add(kaart);
-                } else {
-                    throw new ValeFailiFormaatErind("Faili formaat ei vasta nõuetele (küsimus == vastus)");
+                if (osad.length != 2) {
+                    display.setForeground(Color.RED);
+                    display.setText("Faili formaat ei vasta nõuetele (küsimus -- vastus)");
+                    throw new ValeFailiFormaatErind("Faili formaat ei vasta nõuetele (küsimus -- vastus)");
                 }
 
+                String küsimus = osad[0];
+                String vastus = osad[1];
 
+                FlashCard kaart = new FlashCard(küsimus, vastus);
+                kaardid.add(kaart);
             }
+            reader.close();
 
-        } catch (Exception e){
+        } catch (ValeFailiFormaatErind e) {
+            System.out.println("Viga: " + e.getMessage());
+            // Kui vaja, saad siin lõpetada meetodi varakult:
+            return;
+
+        } catch (IOException e) {
+            display.setForeground(Color.RED);
+            display.setText("Ei saanud failist lugeda.");
             System.out.println("Ei saanud failist lugeda.");
+            e.printStackTrace();
+
+        } catch (Exception e) {
+            display.setForeground(Color.RED);
+            display.setText("Tundmatu viga failist lugemisel.");
+            System.out.println("Tundmatu viga failist lugemisel.");
             e.printStackTrace();
         }
 
@@ -308,32 +324,18 @@ public class FlashCardMängija {
         näitaJärgmineKaart();
     }
 
+
     /**
      * Meetod abil liigutakse Iteratori abil järgmise kaardi juurde ja kuvatakse küsimust
      */
     private void näitaJärgmineKaart() {
         hetkeKaart = (FlashCard) cardIterator.next();
+        display.setForeground(Color.BLUE);
         tekstiEffekt(hetkeKaart.getKüsimus());  //kuvab küsimuse fadeInText meetodi abil
         näitaVastustNupp.setText("Näita vastust"); //muudab nupu nime
         näitaVastus = true;
         ValeNupp.setVisible(false);
     }
-
-    /*
-    private void näitaHetkeKaart() {
-        if (hetkeKaart != null) {
-            // votame hetkekaardi indeksi ja eemaldame
-            int indeks = ValestiVastatud.indexOf(hetkeKaart);
-            ValestiVastatud.remove(hetkeKaart);
-            // uus kaart on nüüd vana asemel???
-            FlashCard uus = ValestiVastatud.get(indeks);
-            tekstiEffekt(uus.getKüsimus());
-            näitaVastustNupp.setText("Näita vastust");
-            näitaVastus = true;
-            ValeNupp.setVisible(false);
-        }
-    }
-    /*
 
     /**
      * Meetod toob teksti sujuvamalt sisse, alustades läbipaistvast ja jõudes täielikult nähtavaks
@@ -341,7 +343,7 @@ public class FlashCardMängija {
      */
     private void tekstiEffekt(String tekst) {
         display.setText(tekst);
-        display.setForeground(new Color(0, 0, 0, 0)); // Alguses läbipaistev
+        display.setForeground(new Color(0, 0, 255, 0)); // Alguses läbipaistev
 
         Timer fadeTimer = new Timer(50, new ActionListener() {
             float opacity = 0.0f; // Läbipaistvus algab nullist
@@ -354,7 +356,7 @@ public class FlashCardMängija {
                     ((Timer) e.getSource()).stop(); // Kui täisnähtav, peatame
                 }
                 //uuendab teksti värvi
-                display.setForeground(new Color(0, 0, 0, (int) (opacity * 255)));
+                display.setForeground(new Color(0, 0, 255, (int) (opacity * 255)));
             }
         });
 
