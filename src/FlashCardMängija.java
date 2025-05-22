@@ -77,14 +77,14 @@ public class FlashCardMängija {
         // MUUDATUS
         ValeNupp.setFont(buttonFont);
 
-        näitaVastustNupp.setBackground(Color.GRAY);
-        näitaVastustNupp.setForeground(Color.WHITE);
-        käiUuestiLäbiNupp.setBackground(Color.GRAY);
-        käiUuestiLäbiNupp.setForeground(Color.WHITE);
+        näitaVastustNupp.setBackground(Color.gray);
+        näitaVastustNupp.setForeground(Color.black);
+        käiUuestiLäbiNupp.setBackground(Color.gray);
+        käiUuestiLäbiNupp.setForeground(Color.black);
 
         // MUUDATUS
-        ValeNupp.setBackground(Color.RED);
-        ValeNupp.setForeground(Color.WHITE);
+        ValeNupp.setBackground(Color.red);
+        ValeNupp.setForeground(Color.black);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         buttonPanel.add(näitaVastustNupp);
@@ -119,7 +119,7 @@ public class FlashCardMängija {
                 näitaVastustNupp.setVisible(true);
 
                 näitaVastustNupp.setText("Näita vastust");
-                näitaVastustNupp.setBackground(Color.GRAY);
+                näitaVastustNupp.setBackground(Color.gray);
                 System.out.println("Võtab valede kaartide listi");
                 Uuedkaardid = new ArrayList<>(ValestiVastatud);
 
@@ -139,7 +139,7 @@ public class FlashCardMängija {
                 käiUuestiLäbiNupp.setVisible(false);
 
                 näitaVastustNupp.setText("Näita vastust");
-                näitaVastustNupp.setBackground(Color.GRAY);
+                näitaVastustNupp.setBackground(Color.gray);
 
                 cardIterator = kaardid.iterator();
                 näitaVastustNupp.setEnabled(true);
@@ -184,12 +184,12 @@ public class FlashCardMängija {
                 tekstiEffekt(hetkeKaart.getVastus());
                 näitaVastustNupp.setText("Õige"); //muudab nupu nimetust
                 ValeNupp.setVisible(true);
-                näitaVastustNupp.setBackground(Color.GREEN);
+                näitaVastustNupp.setBackground(Color.green);
                 näitaVastus = false;
             } else {
                 if (cardIterator.hasNext()){
                     näitaJärgmineKaart();
-                    näitaVastustNupp.setBackground(Color.GRAY);
+                    näitaVastustNupp.setBackground(Color.gray);
                 }
 
                 else { //kaardid otsas

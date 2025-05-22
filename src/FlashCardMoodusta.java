@@ -83,7 +83,7 @@ public class FlashCardMoodusta {
         //nupp uue kaardi lisamiseks, voimalik peale selle vajutamist uut kaarti hakata taitma
         JButton järgmine = new JButton("Lisa kaart");
         järgmine.setBackground(Color.GRAY);
-        järgmine.setForeground(Color.WHITE);
+        järgmine.setForeground(Color.black);
         järgmine.setFont(new Font("Arial", Font.BOLD, 14));
         järgmine.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -168,9 +168,11 @@ public class FlashCardMoodusta {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            //FlashCardi tegemine
-            if(!küsimus.equals("") || !vastus.equals("")){
-                FlashCard kaart = new FlashCard(küsimus.getText(), vastus.getText());
+            String kysimusTekst = küsimus.getText().trim();
+            String vastusTekst = vastus.getText().trim();
+
+            if (!kysimusTekst.isEmpty() && !vastusTekst.isEmpty()) {
+                FlashCard kaart = new FlashCard(kysimusTekst, vastusTekst);
                 kaardid.add(kaart);
             }
             puhastaKaart();
@@ -196,8 +198,8 @@ public class FlashCardMoodusta {
     class salvestaMenüüListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(!küsimus.equals("") || !vastus.equals("")){
-                FlashCard card = new FlashCard(küsimus.getText(), vastus.getText());
+            if (!küsimus.getText().trim().isEmpty() && !vastus.getText().trim().isEmpty()) {
+                FlashCard card = new FlashCard(küsimus.getText().trim(), vastus.getText().trim());
                 kaardid.add(card);
             }
 
