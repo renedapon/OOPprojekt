@@ -285,14 +285,14 @@ public class FlashCardMängija {
             while ((line = reader.readLine()) != null){
 
                 String[] osad = line.split(" -- ");
-                String küsimus = osad[0];
-                String vastus = osad[1];
-                if(osad[1] != null) {
-                    FlashCard kaart = new FlashCard(küsimus, vastus);
-                    kaardid.add(kaart);
-                } else {
+                if (osad.length != 2){
                     throw new ValeFailiFormaatErind("Faili formaat ei vasta nõuetele (küsimus == vastus)");
                 }
+                String küsimus = osad[0];
+                String vastus = osad[1];
+                FlashCard kaart = new FlashCard(küsimus, vastus);
+                kaardid.add(kaart);
+
 
 
             }
